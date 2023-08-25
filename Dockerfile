@@ -6,5 +6,3 @@ RUN npm config set unsafe-perm true && npm ci --prod
 COPY . .
 EXPOSE 5000
 CMD node server.js
-
-ENV NODE_ENV='production'
