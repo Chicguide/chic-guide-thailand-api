@@ -303,6 +303,14 @@ Parse.Cloud.define('loginInCloud', async (req) => {
 
   const { params } = req
 
+  // check user status
+  const query = new Parse.Query(Parse.User)
+  query.equalTo('username', params.username)
+  query.equalTo('status', '1')
+  const user = await query.first({ useMasterKey: true })
+  if (!user) throw 'User Status Not Active'
+  // 
+
   const newUser = new Parse.User
 
   let sessionToken = null
@@ -376,4 +384,22 @@ Parse.Cloud.define('signUpInCloud', async (req) => {
 
 Parse.Cloud.define('createAnonymousUser', async () => {
   return Parse.AnonymousUtils.logIn()
+})
+
+Parse.Cloud.define('deleteAccount', async (req) => {
+
+  const params = req.params
+
+  const query1 = new Parse.Query(Parse.User)
+  query1.equalTo('objectId', params.id)
+
+  const user1 = await query1.first()
+
+  if (!user1) throw 'User not found'
+
+  user1.set('status', '0')
+
+  return await user1.save(null, {
+    useMasterKey: true
+  })
 })
