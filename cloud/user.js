@@ -303,14 +303,6 @@ Parse.Cloud.define('loginInCloud', async (req) => {
 
   const { params } = req
 
-  // check user status
-  const query = new Parse.Query(Parse.User)
-  query.equalTo('username', params.username)
-  query.equalTo('status', '1')
-  const user = await query.first({ useMasterKey: true })
-  if (!user) throw 'User Status Not Active'
-  // 
-
   const newUser = new Parse.User
 
   let sessionToken = null
@@ -322,6 +314,14 @@ Parse.Cloud.define('loginInCloud', async (req) => {
     await newUser.logIn()
 
     sessionToken = newUser.getSessionToken()
+
+    // check user status
+    const query = new Parse.Query(Parse.User)
+    query.equalTo('username', params.username)
+    query.equalTo('status', '1')
+    const user = await query.first({ useMasterKey: true })
+    if (!user) throw 'User Status Not Active'
+    // 
 
   } else {
 
@@ -353,6 +353,14 @@ Parse.Cloud.define('loginInCloud', async (req) => {
     })
 
     sessionToken = data.sessionToken
+
+    // check user status
+    const query = new Parse.Query(Parse.User)
+    query.equalTo('username', params.username)
+    query.equalTo('status', '1')
+    const user = await query.first({ useMasterKey: true })
+    if (!user) throw 'User Status Not Active'
+    // 
   }
 
   return { sessionToken }
